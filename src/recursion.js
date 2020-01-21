@@ -376,13 +376,17 @@ var replaceKeysInObj = function(obj, oldKey, newKey) {
 // fibonacci(5); // [0,1,1,2,3,5]
 // Note: The 0 is not counted.
 var fibonacci = function(n) {
+    if (n < 1) {
+        return null;
+    }
 
-    if (n === 0) {
-        return 0
-    } else if (n === 1) {
-        return 1
+    if (n === 1) {
+        return [0, 1];
     } else {
-        return fibonacci(n-1) + fibonacci(n-2);
+
+        var fibs = fibonacci(n-1);
+        fibs.push(fibs[fibs.length-1] + fibs[fibs.length-2]);
+        return fibs;
     }
 };
 
@@ -410,11 +414,22 @@ var nthFibo = function(n) {
 // var words = ['i', 'am', 'learning', 'recursion'];
 // capitalizedWords(words); // ['I', 'AM', 'LEARNING', 'RECURSION']
 var capitalizeWords = function(array) {
+    if (array.length === 0) {
+        return [];
+    } else {
+        return [array[0].toUpperCase()].concat(capitalizeWords(array.slice(1, array.length)));
+    }
 };
 
 // 28. Given an array of strings, capitalize the first letter of each index.
 // capitalizeFirst(['car','poop','banana']); // ['Car','Poop','Banana']
 var capitalizeFirst = function(array) {
+    if (array.length === 0) {
+        return [];
+    } else {
+        var capWord = array[0][0].toUpperCase() + array[0].slice(1, array[0].length);
+        return [capWord].concat(capitalizeFirst(array.slice(1, array.length)));
+    }
 };
 
 // 29. Return the sum of all even numbers in an object containing nested objects.
@@ -427,16 +442,59 @@ var capitalizeFirst = function(array) {
 // };
 // nestedEvenSum(obj1); // 10
 var nestedEvenSum = function(obj) {
+    var count = 0;
+
+    for (var k in obj) {
+        if (typeof obj[k] === 'object') {
+            count += nestedEvenSum(obj[k])
+        } else if (obj[k] % 2 === 0 ) {
+            count += obj[k];
+        }
+    }
+    return count;
 };
 
 // 30. Flatten an array containing nested arrays.
 // flatten([1,[2],[3,[[4]]],5]); // [1,2,3,4,5]
 var flatten = function(array) {
+
+    var output = [];
+
+    for (var i = 0; i < array.length; i++) {
+
+        var result;
+
+        if (Array.isArray(array[i])) {
+            result = flatten(array[i]);
+        } else {
+            result = [array[i]]
+        }
+        //console.log('Result', result);
+        output.concat(result);
+        //console.log('Output', output);
+    }
+
+    return output;
 };
 
 // 31. Given a string, return an object containing tallies of each letter.
 // letterTally('potato'); // {p:1, o:2, t:2, a:1}
 var letterTally = function(str, obj) {
+
+    if (obj === undefined) {
+        obj = {};
+    }
+
+    if (str.length === 0) {
+        return obj
+    } else {
+        if (obj[str[0]] === undefined) {
+            obj[str[0]] = 1;
+        } else {
+            obj[str[0]] += 1;
+        }
+        return letterTally(str.slice(1, str.length), obj);
+    }
 };
 
 // 32. Eliminate consecutive duplicates in a list. If the list contains repeated
@@ -445,12 +503,48 @@ var letterTally = function(str, obj) {
 // compress([1,2,2,3,4,4,5,5,5]) // [1,2,3,4,5]
 // compress([1,2,2,3,4,4,2,5,5,5,4,4]) // [1,2,3,4,2,5,4]
 var compress = function(list) {
+
+    var output = [];
+
+    if (list.length === 0) {
+        return [];
+    }
+    
+    var letter = list[0]
+    var index;
+    output.push(letter)
+
+    for (var i = 0; i <= list.length; i++){
+        index = i;
+        if (list[i] !== letter){
+        break
+        }
+    }
+
+    return output.concat(compress(list.slice(index, list.length)));
+
 };
 
 // 33. Augment every element in a list with a new value where each element is an array
 // itself.
 // augmentElements([[],[3],[7]], 5); // [[5],[3,5],[7,5]]
 var augmentElements = function(array, aug) {
+
+    var output = [];
+
+    if (array.length === 0) {
+        return output;
+    } else {
+        // Select first element from list and add augment
+        var element = array[0]
+        element.push(aug)
+
+        // Add augmented element to an array and concatenate with output
+        output.push(element);
+
+        // Concatenate this output with recursive result of calling on remaining list elements
+        return output.concat(augmentElements(array.slice(1, array.length), aug));
+    }
 };
 
 // 34. Reduce a series of zeroes to a single 0.
