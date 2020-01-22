@@ -668,12 +668,76 @@ var tagCount = function(tag, node) {
 // binarySearch(array, 5) // 5
 // https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/binary-search
 var binarySearch = function(array, target, min, max) {
+    // Note that binary search requires the search array to be sorted!
+
+    if (min === undefined) {
+        min = 0;
+    }
+    if (max === undefined) {
+        max = array.length;
+    }
+
+    // Base case if array is empty or if min > max
+    if (array.length === 0 || min > max){
+        return null;
+    }
+    
+    var mid = Math.floor((max + min)/2);
+
+    // Base case if mid point is number to be found:
+    if (array[mid] === target) {
+        return mid;
+    // If the value at the mid point is greater than the target, search lower half
+    } else if (array[mid] > target) {
+        return binarySearch(array, target, min, mid-1);
+    // If the value at the mid point is lower than the target, search upper half
+    } else {
+        return binarySearch(array, target, mid+1, max)
+    }
+
+
 };
 
 // 39. Write a merge sort function.
 // mergeSort([34,7,23,32,5,62]) // [5,7,23,32,34,62]
 // https://www.khanacademy.org/computing/computer-science/algorithms/merge-sort/a/divide-and-conquer-algorithms
 var mergeSort = function(array) {
+    // Sort algorithm employing divide and conquer method
+
+    // Base Case: Array has less than 2 items:
+    if (array.length < 2) {
+        return array;
+    }
+
+    // Otherwise recursively split array down into smaller units:
+    var mid =  Math.floor(array.length/2);
+
+    var left = mergeSort(array.slice(0, mid));
+    var right = mergeSort(array.slice(mid, array.length));
+
+    var result = [];
+
+    //Sort the first value from each sub-array until both are empty
+    while (left.length > 0 || right.length > 0) {
+        //If left or right emopty then add the remaining sub-array to result
+        if (left.length === 0) {
+            result = result.concat(right);
+            right = [];
+        } else if (right.length === 0) {
+            result= result.concat(left);
+            left = [];
+        // Otherwise compare the first value of each array and add smaller to the result
+        } else {
+            if (left[0] < right[0]) {
+                result.push(left.shift());
+            } else {
+                result.push(right.shift());
+            }
+        }
+        
+    }
+
+    return result;
 };
 
 // 40. Deeply clone objects and arrays.
@@ -682,4 +746,35 @@ var mergeSort = function(array) {
 // console.log(obj2); // {a:1,b:{bb:{bbb:2}},c:3}
 // obj1 === obj2 // false
 var clone = function(input) {
+    
+    // For cloning arrrays
+    if (Array.isArray(input)) {
+        var result = [];
+
+        for (var i = 0; i < input.length; i++) {
+            if (typeof input[i] === 'object') {
+                result.push(clone(input[i]));
+            } else {
+                result.push(input[i]);
+            }
+        }
+
+        return result;
+
+    // For cloning object
+    } else if (typeof input === 'object') {
+        var result = {};
+
+        for (var k in input) {
+            if (typeof input[k] === 'object') {
+                result[k] = clone(input[k]);
+            } else {
+                result[k] = input[k];
+            }
+        }
+
+        return result;
+    }
+
+    
 };
