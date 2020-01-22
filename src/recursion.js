@@ -223,6 +223,30 @@ var divide = function(x, y) {
 // http://www.cse.wustl.edu/~kjg/cse131/Notes/Recursion/recursion.html
 // https://www.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/the-euclidean-algorithm
 var gcd = function(x, y) {
+
+    // Base Cases if x or y are 0, or numbers are negative:
+    if (x < 0 | y < 0) {
+        return null;
+    } else if (x === 0) {
+        return y;
+    } else if (y === 0) {
+        return x;
+    } else {
+
+    // Find larger number of the pair:
+    if (x > y) {
+        var larger = x;
+        var smaller = y;
+    } else {
+        var larger = y;
+        var smaller = x;
+    }
+
+    // Take modulo of larger wrt smaller:
+    var result = larger % smaller;
+
+    return gcd(smaller, result);
+    }
 };
 
 // 15. Write a function that compares each character of two strings and returns true if
@@ -462,16 +486,11 @@ var flatten = function(array) {
 
     for (var i = 0; i < array.length; i++) {
 
-        var result;
-
         if (Array.isArray(array[i])) {
-            result = flatten(array[i]);
+            output = output.concat(flatten(array[i]));
         } else {
-            result = [array[i]]
+            output.push(array[i]);
         }
-        //console.log('Result', result);
-        output.concat(result);
-        //console.log('Output', output);
     }
 
     return output;
@@ -629,7 +648,6 @@ var numToText = function(str) {
         if (numText[charDigit] !== undefined){
             result += numText[charDigit];
         } else {
-            console.log('adding char directly');
             result += str[0];
         }
 
