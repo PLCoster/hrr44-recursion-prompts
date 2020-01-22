@@ -551,19 +551,91 @@ var augmentElements = function(array, aug) {
 // minimizeZeroes([2,0,0,0,1,4]) // [2,0,1,4]
 // minimizeZeroes([2,0,0,0,1,0,0,4]) // [2,0,1,0,4]
 var minimizeZeroes = function(array) {
+    var output = [];
+
+    if (array.length === 0) {
+        return [];
+    }
+    
+    var num = array[0]
+    var index = 1;
+    output.push(num)
+
+    // If num is a zero, search through array until a non-zero number is found
+    if (num === 0){
+        for (var i = 1; i <= array.length; i++){
+            index = i;
+            if (array[i] !== 0){
+            break
+            }
+        }
+    };
+
+    // Recursive call to minimize Zero on the remaining array
+    return output.concat(minimizeZeroes(array.slice(index, array.length)));
 };
 
 // 35. Alternate the numbers in an array between positive and negative regardless of
 // their original sign. The first number in the index always needs to be positive.
 // alternateSign([2,7,8,3,1,4]) // [2,-7,8,-3,1,-4]
 // alternateSign([-2,-7,8,3,-1,4]) // [2,-7,8,-3,1,-4]
+
 var alternateSign = function(array) {
+    
+    // Base Case if given empty array
+    if (array.length === 0) {
+        return [];
+    // Base Case if given array length of 1 - number at index must be positive
+    } else if (array.length === 1) {
+        if (array[0] < 0) {
+            return [-array[0]];
+        } else {
+            return [array[0]];
+        }  
+
+    // Otherwise carry out recursive calls to alternateSign
+    } else {
+        var num = array[array.length-1];
+        var alternate = alternateSign(array.slice(0, array.length-1));
+
+        if (alternate.length % 2 === 1 && num > 0){
+            alternate.push(-num);
+        } else if (alternate.length % 2 === 0 && num < 0){
+            alternate.push(-num);
+        } else {
+            alternate.push(num);
+        }
+        return alternate;
+    }
 };
 
 // 36. Given a string, return a string with digits converted to their word equivalent.
 // Assume all numbers are single digits (less than 10).
 // numToText("I have 5 dogs and 6 ponies"); // "I have five dogs and six ponies"
 var numToText = function(str) {
+    var numText = {1:'one', 2:'two', 3:'three', 4:'four', 5:'five', 6:'six', 7:'seven', 8:'eight', 9:'nine'}
+
+    var result = '';
+
+    // Base Case for empty string:
+    if (str.length === 0) {
+        return '';
+    // Recursive Case
+    } else {
+
+        var charDigit = parseInt(str[0]);
+
+        // If Char is numerical then replace with string from numText object
+        if (numText[charDigit] !== undefined){
+            result += numText[charDigit];
+        } else {
+            console.log('adding char directly');
+            result += str[0];
+        }
+
+        return result += numToText(str.slice(1, str.length));
+
+    }
 };
 
 
